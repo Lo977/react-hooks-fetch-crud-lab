@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function QuestionForm(props) {
+function QuestionForm({ onHandleSubmit }) {
   const [formData, setFormData] = useState({
     prompt: "",
     answer1: "",
@@ -9,17 +9,46 @@ function QuestionForm(props) {
     answer4: "",
     correctIndex: 0,
   });
+  // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,//
+  const answersList = [
+    formData.answer1,
+    formData.answer2,
+    formData.answer3,
+    formData.answer4,
+  ];
+  function handleSubmit(event) {
+    event.preventDefault();
+    const formObj = {
+      prompt: formData.prompt,
+      answers: answersList,
+      correctIndex: formData.correctIndex,
+    };
+    fetch(`http://localhost:4000/questions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formObj),
+    })
+      .then((r) => r.json())
+      .then((newData) => onHandleSubmit(newData));
+    setFormData({
+      prompt: "",
+      answer1: "",
+      answer2: "",
+      answer3: "",
+      answer4: "",
+      correctIndex: 0,
+    });
+  }
+  // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,//
+  // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,//
 
   function handleChange(event) {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
     });
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    console.log(formData);
   }
 
   return (
